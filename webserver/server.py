@@ -38,7 +38,8 @@ app = Flask(__name__, template_folder=tmpl_dir)
 #     DATABASEURI = "postgresql://ewu2493:foobar@<IP_OF_POSTGRE_SQL_SERVER>/postgres"
 #
 # Swap out the URI below with the URI for the database created in part 2
-DATABASEURI = "sqlite:///test.db"
+
+DATABASEURI = "postgresql://kc3031:p923n@104.196.175.120/postgres"
 
 
 #
@@ -134,10 +135,10 @@ def index():
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT name FROM test")
-  names = []
+  cursor = g.conn.execute("SELECT title FROM item")
+  titles = []
   for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
+    titles.append(result['title'])  # can also be accessed using result[0]
   cursor.close()
 
   #
@@ -166,7 +167,7 @@ def index():
   #     <div>{{n}}</div>
   #     {% endfor %}
   #
-  context = dict(data = names)
+  context = dict(data = titles)
 
 
   #
@@ -186,6 +187,27 @@ def index():
 @app.route('/another')
 def another():
   return render_template("anotherfile.html")
+
+@app.route('/content', methods=['GET', 'POST'])
+def content():
+    contents = []
+    t = request.args.get('title')
+    contents.append(t)
+    cursor = g.conn.execute("SELECT abstract FROM item WHERE title = %s;", t)
+    for result in cursor:
+        contents.append(result[0])
+    cursor = g.conn.execute("SELECT content FROM item WHERE title = %s;", t)
+    for result in cursor:
+        contents.append(result[0])
+    cursor.close()
+    contents.append('content')
+    context = dict(data=contents)
+    return render_template("content.html", **context)
+
+
+@app.route('/profile')
+def profile():
+  return render_template("profile.html")
 
 
 # Example of adding new data to the database
