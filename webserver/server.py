@@ -18,7 +18,7 @@ Read about it online.
 import os
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
+from flask import Flask, request, render_template, g, redirect, Response, jsonify
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -135,10 +135,10 @@ def index():
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT title FROM item")
-  titles = []
+  cursor = g.conn.execute("SELECT title, abstract, content FROM item")
+  data = []
   for result in cursor:
-    titles.append(result['title'])  # can also be accessed using result[0]
+    data.append(result)
   cursor.close()
 
   #
@@ -167,7 +167,7 @@ def index():
   #     <div>{{n}}</div>
   #     {% endfor %}
   #
-  context = dict(data = titles)
+  context = dict(data=data)
 
 
   #
@@ -203,6 +203,20 @@ def content():
     contents.append('content')
     context = dict(data=contents)
     return render_template("content.html", **context)
+
+# @app.route('/', methods=['GET', 'POST'])
+# def content():
+#     title = request.args.get('title')
+#     cursor = g.conn.execute("SELECT abstract FROM item WHERE title = %s;", t)
+#     abstracts = []
+#     for result in cursor:
+#         abstracts.append(result[0])
+#     cursor = g.conn.execute("SELECT content FROM item WHERE title = %s;", t)
+#     contents = []
+#     for result in cursor:
+#         contents.append(result[0])
+#     cursor.close()
+#     return jsonify(title=title, abstracts=abstracts, contents=contents)
 
 
 @app.route('/profile')
