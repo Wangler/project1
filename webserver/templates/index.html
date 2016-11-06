@@ -31,16 +31,18 @@
     <table class="table table-striped table-hover table-responsive table-condensed">
       {% for row in data %}
         <div id="expand_details" data-id="{{row['title']}}">
-        <td>{{row['title']}}</td>
+        <td>{{row['title']}}</td> 
+        <td> <a href = {{row['content']}} target="_blank"> VIEW </a> </td>
+        <td> <a href = {{row['content']}} target="_blank"> FAVE </a> </td>
+        <td> <a href = {{row['content']}} target="_blank"> SHARE </a> </td>
         <tr><td colspan=3><p>
             <b>{{row['title']}}</b><br>
             <i>{{row['abstract']}}</i> <br> <br>
-            <a href = {{row['content']}} target="_blank"> VIEW </a>
+          </div>
 <!--             VIEW BUTTON
             SHARE BUTTON
             FAVE BUTTON -->
         </p></td></tr>
-        </div>
         <!-- <tr><td colspan="3"><a href="{{ url_for('content', title=n ) }}">{{n}}</a></td></tr> -->
       {% endfor %}
 
