@@ -1,0 +1,5 @@
+
+.table>tbody>tr>td.nopadding {
+    padding: 0px;
+    border-top: 0px;
+}
