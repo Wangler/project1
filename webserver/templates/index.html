@@ -25,17 +25,25 @@
 <body>
   <h1>newsie</h1>
 
-<form name="Item_1" action="/" method="POST">
+<form name="Filters" action="/" method="POST">
     <select name="Subject">
-        <option value="Red">Red</option>
-        <option value="Green">Green</option>        
+        {% for option in subject_options %}
+          <option value="{{option}}" SELECTED > {{option}}</option> 
+        {% endfor %}   
     </select>
-    <select name="Item_1">
-        <option value="Red">Red</option>
-        <option value="Green">Green</option>        
+    <select name="Publisher">
+        {% for option in publisher_options %}
+          <option value="{{option}}" SELECTED > {{option}}</option> 
+        {% endfor %}          
     </select>
-    <button type="submit">Compare!</button>
+    <select name="Political Stance">
+        {% for option in political_options %}
+          <option value="{{option}}" SELECTED > {{option}}</option> 
+        {% endfor %}          
+    </select>
+    <input class="button1" type="submit" value="Select"></button>
 </form>
+
 
 {% block body %}
 <div id="main" class="container">

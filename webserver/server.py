@@ -134,10 +134,36 @@ def index():
   #
   # example of a database query
   #
+  """ LOADING ALL POSTS ONTO THE PAGE"""
   cursor = g.conn.execute("SELECT title, abstract, content FROM item")
   data = []
   for result in cursor:
     data.append(result)
+
+  """ LOADING ALL DROP-DOWN OPTIONS FOR SUBJECT"""
+  subject_options = []
+  cursor = g.conn.execute("SELECT DISTINCT subject_name FROM subject")
+  for result in cursor:
+      subject_options.append(result[0])
+
+  print subject_options
+
+  """ LOADING ALL DROP-DOWN OPTIONS FOR PUBLISHER"""
+  publisher_options = []
+  cursor = g.conn.execute("SELECT DISTINCT publisher_name FROM publisher")
+  for result in cursor:
+      publisher_options.append(result['publisher_name'])
+
+  print publisher_options
+
+  """ LOADING ALL DROP-DOWN OPTIONS FOR POLITICAL STANCE"""
+  political_options = []
+  cursor = g.conn.execute("SELECT DISTINCT political_stance FROM publisher")
+  for result in cursor:
+      political_options.append(result[0])
+
+  print political_options
+
   cursor.close()
 
   #
@@ -166,7 +192,7 @@ def index():
   #     <div>{{n}}</div>
   #     {% endfor %}
   #
-  context = dict(data=data)
+  context = dict(data=data, subject_options=subject_options, publisher_options=publisher_options, political_options=political_options)
 
 
   #
@@ -201,7 +227,8 @@ def content():
     cursor.close()
     contents.append('content')
     context = dict(data=contents)
-    return render_template("content.html", **context)
+    return render_template("index.html", **context)
+
 
 # @app.route('/', methods=['GET', 'POST'])
 # def content():
