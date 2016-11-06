@@ -74,7 +74,6 @@ engine.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'
 #
 
 
-
 @app.before_request
 def before_request():
   """
