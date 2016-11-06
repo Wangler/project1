@@ -8,6 +8,10 @@ $(function () {
         if ($detailsTd.length) {
             $detailsTd.find("p").slideUp();
             $detailsTd.addClass("nopadding");
+            // $.getJSON($SCRIPT_ROOT, {
+            //     title: $('input[name="a"]').val(),
+            //   }, function(data) {
+            //     $("#result").text(data.result);
 
         } else {
             $detailsTd = $target.next().find("td[colspan=3]");
