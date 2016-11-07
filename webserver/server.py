@@ -244,13 +244,31 @@ def content():
 @app.route('/results', methods=['POST'])
 def filter_result():
     if request.method == "POST":
-        print request.form['Subject']
-        cursor = g.conn.execute("SELECT sid FROM subject WHERE subject_name = (%s);", request.form['Subject'])
-        sids = []
+        """ SUBJECT FILTERING"""
+        subject_query = "SELECT title, abstract, content FROM subject s, item i, cover c WHERE c.iid = i.iid AND c.sid = s.sid GROUP BY title, abstract, content"
+        if request.form['Subject']:
+            print request.form['Subject']
+            subject_query = "SELECT title, abstract, content FROM subject s, item i, cover c WHERE c.iid = i.iid AND c.sid = s.sid AND subject_name = %(Subject)s"
+
+        """PUBLISHER FILTERING"""
+        publisher_query = "SELECT title, abstract, content FROM item i, publisher p, publisher_publish_item ppi WHERE ppi.iid = i.iid AND ppi.pid = p.pid GROUP BY title, abstract, content"
+        if request.form['Publisher']:
+            print request.form['Publisher']
+            publisher_query = "SELECT title, abstract, content FROM item i, publisher p, publisher_publish_item ppi WHERE ppi.iid = i.iid AND ppi.pid = p.pid AND publisher_name = %(Publisher)s GROUP BY title, abstract, content"
+
+        """POLITICAL STANCE FILTERING"""
+        political_query = "SELECT title, abstract, content FROM item i, publisher p, publisher_publish_item ppi WHERE ppi.iid = i.iid AND ppi.pid = p.pid GROUP BY title, abstract, content"
+        if request.form['Political_Stance']:
+            print request.form['Political_Stance']
+            political_query = "SELECT title, abstract, content FROM item i, publisher p, publisher_publish_item ppi WHERE ppi.iid = i.iid AND ppi.pid = p.pid AND political_stance = %(Political_Stance)s GROUP BY title, abstract, content"
+
+        query = subject_query + " INTERSECT " + publisher_query + " INTERSECT " + political_query + ";"
+        cursor = g.conn.execute(query, request.form)
+        data = []
         for result in cursor:
-            sids.append(result[0])
-        print sids
-    return render_template("results.html", sids=sids)
+            data.append(result)
+
+    return render_template("results.html", data=data)
 
 @app.route('/user_login', methods=['GET', 'POST'])
 def user_login():
