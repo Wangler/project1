@@ -6,7 +6,7 @@
     }
   </style>
 <head>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/hot-sneaks/jquery-ui.css">
 
@@ -14,16 +14,25 @@
 <script src= "//cdnjs.cloudflare.com/ajax/libs/skrollr/0.6.29/skrollr.min.js"></script>
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-<link rel="stylesheet" href="https://bootswatch.com/paper/bootstrap.min.css">
+<link rel="stylesheet" href="https://bootswatch.com/readable/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
 <script src="{{url_for('static', filename='custom.js')}}"></script>
 <script src="{{url_for('static', filename='custom.css')}}"></script>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.11.2/css/bootstrap-select.min.css">
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.11.2/js/bootstrap-select.min.js"></script>
+
 
 <title> newsie </title>
 </head>
 
 
 <body>
+<div id ="main" class="container">
   <h1>newsie</h1>
+</div>
 
 <div id="main" class="container" align="right">
 <table style="width:30%">
@@ -38,22 +47,26 @@
 
 <div id="main" class="container">
 <form name="Filters" action="/" method="POST">
-    <select name="Subject">
+    <!-- Remove "multiple" arg to restrict selections to only 1 -->
+    <select name="Subject" class="selectpicker" multiple title="Subject">
         {% for option in subject_options %}
-          <option value="{{option}}" SELECTED > {{option}}</option> 
+          <option> {{option}}</option> 
         {% endfor %}   
     </select>
-    <select name="Publisher">
+    <select name="Publisher" class="selectpicker" multiple title="Publisher">
         {% for option in publisher_options %}
-          <option value="{{option}}" SELECTED > {{option}}</option> 
+          <option> {{option}}</option> 
         {% endfor %}          
     </select>
-    <select name="Political Stance">
+    <select name="Political Stance" class="selectpicker" multiple title="Political Lean">
         {% for option in political_options %}
-          <option value="{{option}}" SELECTED > {{option}}</option> 
+          <option> {{option}}</option> 
         {% endfor %}          
     </select>
-    <input class="button1" type="submit" value="Select"></button>
+
+
+    <!-- <input class="button1" type="submit" value="Select"></button> -->
+    <button type="submit" class="btn btn-default" value="Select">Select</button>
 </form>
 </div>
 
