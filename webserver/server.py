@@ -241,19 +241,16 @@ def content():
     return render_template("content.html", **context)
 
 
-# @app.route('/', methods=['GET', 'POST'])
-# def content():
-#     title = request.args.get('title')
-#     cursor = g.conn.execute("SELECT abstract FROM item WHERE title = %s;", t)
-#     abstracts = []
-#     for result in cursor:
-#         abstracts.append(result[0])
-#     cursor = g.conn.execute("SELECT content FROM item WHERE title = %s;", t)
-#     contents = []
-#     for result in cursor:
-#         contents.append(result[0])
-#     cursor.close()
-#     return jsonify(title=title, abstracts=abstracts, contents=contents)
+@app.route('/results', methods=['POST'])
+def filter_result():
+    if request.method == "POST":
+        print request.form['Subject']
+        cursor = g.conn.execute("SELECT sid FROM subject WHERE subject_name = (%s);", request.form['Subject'])
+        sids = []
+        for result in cursor:
+            sids.append(result[0])
+        print sids
+    return render_template("results.html", sids=sids)
 
 @app.route('/user_login', methods=['GET', 'POST'])
 def user_login():
