@@ -141,7 +141,10 @@ def index():
   # DEBUG: this is debugging code to see what request looks like
   print request.args
 
-
+  """ CHECK USER_LOGIN """
+  user = []
+  if 'email' in session:
+      user.append(true)
   #
   # example of a database query
   #
@@ -207,7 +210,7 @@ def index():
   #     <div>{{n}}</div>
   #     {% endfor %}
   #
-  context = dict(data=data, subject_options=subject_options, publisher_options=publisher_options, political_options=political_options)
+  context = dict(user=user, data=data, subject_options=subject_options, publisher_options=publisher_options, political_options=political_options)
 
 
   #
@@ -353,6 +356,8 @@ def register():
 @app.route('/profile')
 def profile():
     if 'email' in session:
+        user = []
+        user.append(true)
         contents = []
         contents.append(session['email'])
         cursor = g.conn.execute("SELECT password FROM users WHERE email = %s;", session['email'])
@@ -361,6 +366,7 @@ def profile():
         cursor = g.conn.execute("SELECT user_name FROM users WHERE email = %s;", session['email'])
         for result in cursor:
             contents.append(result[0])
+            user.append(result[0])
 
         list = []
         cursor = g.conn.execute("SELECT DISTINCT iid FROM user_view WHERE email = %s;", session['email'])
@@ -390,7 +396,7 @@ def profile():
                 contents.append("Share: " + result[0])
 
         cursor.close()
-        context = dict(data=contents)
+        context = dict(user=user, data=contents)
         return render_template("profile.html", **context)
     else:
         return redirect('/user_login')
