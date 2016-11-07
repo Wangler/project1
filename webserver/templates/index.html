@@ -24,14 +24,15 @@
 
 <body>
   <h1>newsie</h1>
+
 <div id="main" class="container">
 <form name="Filters" action="/" method="POST">
-    <select name="Subject" width=500px>
+    <select name="Subject">
         {% for option in subject_options %}
           <option value="{{option}}" SELECTED > {{option}}</option> 
         {% endfor %}   
     </select>
-    <select name="Publisher" >
+    <select name="Publisher">
         {% for option in publisher_options %}
           <option value="{{option}}" SELECTED > {{option}}</option> 
         {% endfor %}          
@@ -47,7 +48,7 @@
 
 {% block body %}
 <div id="main" class="container">
-    <h3>latest news</h3>
+    <h2>latest news</h2>
     <table class="table table-striped table-hover table-responsive table-condensed">
       {% for row in data %}
         <div id="expand_details" data-id="{{row['title']}}">
@@ -71,6 +72,9 @@
 
 <div id="main" class="container">
 <p><a href="/profile">My Profile</a></p>
+
+<p><a href="/user_login">LogIn</a></p>
+<p><a href="/user_logout">LogOut</a></p>
 
 <form method="POST" action="/add">
 <p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
