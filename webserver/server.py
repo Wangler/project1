@@ -25,6 +25,7 @@ from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, url_for, redirect, session, flash, Response, jsonify
 from sqlalchemy.orm import sessionmaker
+from requests.utils import quote
 #from MySQLdb import escape_string as thwart
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
@@ -148,7 +149,11 @@ def index():
   cursor = g.conn.execute("SELECT title, abstract, content FROM item")
   data = []
   for result in cursor:
-    data.append(result)
+    facebook_share_url = 'https://www.facebook.com/sharer/sharer.php?u=' + quote(result['content'])
+    twitter_share_url = 'https://twitter.com/home?status=Discovered%20via%20Newsie%3A%20' + quote(result['content'])
+    gplus_share_url = 'https://plus.google.com/share?url=' + quote(result['content'])
+    shares = dict(twitter_share_url=twitter_share_url, facebook_share_url=facebook_share_url, gplus_share_url=gplus_share_url)
+    data.append(dict(result.items() + shares.items()))
 
   """ LOADING ALL DROP-DOWN OPTIONS FOR SUBJECT"""
   subject_options = []
@@ -241,7 +246,7 @@ def content():
     return render_template("content.html", **context)
 
 
-@app.route('/results', methods=['POST'])
+@app.route('/', methods=['POST'])
 def filter_result():
     if request.method == "POST":
         """ SUBJECT FILTERING"""
@@ -266,7 +271,11 @@ def filter_result():
         cursor = g.conn.execute(query, request.form)
         data = []
         for result in cursor:
-            data.append(result)
+            facebook_share_url = 'https://www.facebook.com/sharer/sharer.php?u=' + quote(result['content'])
+            twitter_share_url = 'https://twitter.com/home?status=Discovered%20via%20Newsie%3A%20' + quote(result['content'])
+            gplus_share_url = 'https://plus.google.com/share?url=' + quote(result['content'])
+            shares = dict(twitter_share_url=twitter_share_url, facebook_share_url=facebook_share_url, gplus_share_url=gplus_share_url)
+            data.append(dict(result.items() + shares.items()))
 
     return render_template("results.html", data=data)
 
