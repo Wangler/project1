@@ -164,7 +164,7 @@ def index():
   for result in cursor:
       subject_options.append(result[0])
 
-  print subject_options
+  #print subject_options
 
   """ LOADING ALL DROP-DOWN OPTIONS FOR PUBLISHER"""
   publisher_options = []
@@ -172,7 +172,7 @@ def index():
   for result in cursor:
       publisher_options.append(result['publisher_name'])
 
-  print publisher_options
+  #print publisher_options
 
   """ LOADING ALL DROP-DOWN OPTIONS FOR POLITICAL STANCE"""
   political_options = []
@@ -180,7 +180,7 @@ def index():
   for result in cursor:
       political_options.append(result[0])
 
-  print political_options
+  #print political_options
 
   cursor.close()
 
@@ -254,15 +254,15 @@ def filter_result():
     if request.method == "POST":
         """ SUBJECT FILTERING"""
         subject_query = "SELECT title, abstract, content FROM subject s, item i, cover c WHERE c.iid = i.iid AND c.sid = s.sid GROUP BY title, abstract, content"
-        if request.form['Subject']:
-            print request.form['Subject']
-            subject_query = "SELECT title, abstract, content FROM subject s, item i, cover c WHERE c.iid = i.iid AND c.sid = s.sid AND subject_name = %(Subject)s"
+        if request.form.getlist('Subject'):
+            print request.form.getlist('Subject')
+            subject_query = "SELECT title, abstract, content FROM subject s, item i, cover c WHERE c.iid = i.iid AND c.sid = s.sid AND subject_name in %(Subject)s"
 
         """PUBLISHER FILTERING"""
         publisher_query = "SELECT title, abstract, content FROM item i, publisher p, publisher_publish_item ppi WHERE ppi.iid = i.iid AND ppi.pid = p.pid GROUP BY title, abstract, content"
-        if request.form['Publisher']:
-            print request.form['Publisher']
-            publisher_query = "SELECT title, abstract, content FROM item i, publisher p, publisher_publish_item ppi WHERE ppi.iid = i.iid AND ppi.pid = p.pid AND publisher_name = %(Publisher)s GROUP BY title, abstract, content"
+        if request.form.getlist('Publisher'):
+            print request.form.getlist('Publisher')
+            publisher_query = "SELECT title, abstract, content FROM item i, publisher p, publisher_publish_item ppi WHERE ppi.iid = i.iid AND ppi.pid = p.pid AND publisher_name in %(Publisher)s GROUP BY title, abstract, content"
 
         """POLITICAL STANCE FILTERING"""
         political_query = "SELECT title, abstract, content FROM item i, publisher p, publisher_publish_item ppi WHERE ppi.iid = i.iid AND ppi.pid = p.pid GROUP BY title, abstract, content"
@@ -271,7 +271,9 @@ def filter_result():
             political_query = "SELECT title, abstract, content FROM item i, publisher p, publisher_publish_item ppi WHERE ppi.iid = i.iid AND ppi.pid = p.pid AND political_stance = %(Political_Stance)s GROUP BY title, abstract, content"
 
         query = subject_query + " INTERSECT " + publisher_query + " INTERSECT " + political_query + ";"
-        cursor = g.conn.execute(query, request.form)
+        params = dict(Subject=tuple(request.form.getlist('Subject')), Publisher=tuple(request.form.getlist('Publisher')), Political_Stance=request.form['Political_Stance'])
+        cursor = g.conn.execute(query, params)
+
         data = []
         for result in cursor:
             facebook_share_url = 'https://www.facebook.com/sharer/sharer.php?u=' + quote(result['content'])

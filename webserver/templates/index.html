@@ -37,12 +37,12 @@
 <br>
 <form name="Filters" action="{{url_for('filter_result')}}" method="POST">
     <!-- Remove "multiple" arg to restrict selections to only 1 -->
-    <select name="Subject" class="selectpicker" data-live-search="true" title="Subject">
+    <select name="Subject" class="selectpicker" multiple data-live-search="true" title="Subject">
         {% for option in subject_options %}
           <option> {{option}}</option> 
         {% endfor %}   
     </select>
-    <select name="Publisher" class="selectpicker" data-live-search="true"title="Publisher">
+    <select name="Publisher" class="selectpicker" multiple data-live-search="true" title="Publisher">
         {% for option in publisher_options %}
           <option> {{option}}</option> 
         {% endfor %}          
