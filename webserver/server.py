@@ -17,6 +17,7 @@ Read about it online.
 
 import os
 import gc
+import datetime
 from functools import wraps
 from flask import url_for
 from wtforms import Form, TextField, PasswordField
@@ -231,6 +232,61 @@ def index():
 def another():
     return render_template("anotherfile.html")
 
+@app.route('/view/<title>', methods=['GET', 'POST'])
+def view(title):
+    url = []
+    cursor = g.conn.execute("SELECT content FROM item WHERE title = %s;", title)
+    for result in cursor:
+        url.append(result[0])
+    if 'email' in session:
+        email = session['email']
+        iid = []
+        cursor = g.conn.execute("SELECT iid FROM item WHERE title = %s;", title)
+        for result in cursor:
+            iid.append(result[0])
+        sid = []
+        cursor = g.conn.execute("SELECT sid FROM cover WHERE iid = %s;", iid[0])
+        for result in cursor:
+            sid.append(result[0])
+        g.conn = engine.connect()
+        print datetime.datetime.now()
+        g.conn.execute("INSERT INTO user_view (view_time, iid, sid, email) VALUES (%s, %s, %s, %s);",
+                                      (datetime.datetime.now(), iid[0], sid[0], email))
+        g.conn.close()
+        gc.collect()
+    return redirect(url[0])
+    return render_template("index.html")
+
+@app.route('/fave/<title>', methods=['GET', 'POST'])
+def fave(title):
+    if 'email' in session:
+        email = session['email']
+        iid = []
+        cursor = g.conn.execute("SELECT iid FROM item WHERE title = %s;", title)
+        for result in cursor:
+            iid.append(result[0])
+        sid = []
+        cursor = g.conn.execute("SELECT sid FROM cover WHERE iid = %s;", iid[0])
+        for result in cursor:
+            sid.append(result[0])
+        check = []
+        cursor = g.conn.execute("SELECT * FROM user_fave WHERE iid = %s AND sid = %s AND email = %s",
+                             iid[0], sid[0], email)
+        for result in cursor:
+            check.append(result[0])
+        if len(check)!=0 and check[0]==iid[0]:
+            return render_template("have_faved.html")
+        else:
+            g.conn = engine.connect()
+            g.conn.execute("INSERT INTO user_fave (iid, sid, email) VALUES (%s, %s, %s);",
+                           (iid[0], sid[0], email))
+            g.conn.close()
+            gc.collect()
+            return render_template("have_faved.html")
+    else:
+        return redirect('/user_login')
+
+    return render_template("index.html")
 
 @app.route('/content', methods=['GET', 'POST'])
 def content():
