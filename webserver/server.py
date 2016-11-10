@@ -427,34 +427,37 @@ def profile():
             user.append(result[0])
 
         list = []
+        view = []
         cursor = g.conn.execute("SELECT DISTINCT iid FROM user_view WHERE email = %s;", session['email'])
         for result in cursor:
             list.append(result)
         for id in list:
             cursor = g.conn.execute("SELECT DISTINCT title FROM item WHERE iid = %s;", id)
             for result in cursor:
-                contents.append("View  : " + result[0])
+                view.append(result[0])
 
         list = []
+        fave = []
         cursor = g.conn.execute("SELECT DISTINCT iid FROM user_fave WHERE email = %s;", session['email'])
         for result in cursor:
             list.append(result)
         for id in list:
             cursor = g.conn.execute("SELECT DISTINCT title FROM item WHERE iid = %s;", id)
             for result in cursor:
-                contents.append("Fave  : " + result[0])
+                fave.append(result[0])
 
         list = []
+        share = []
         cursor = g.conn.execute("SELECT DISTINCT iid FROM user_share WHERE email = %s;", session['email'])
         for result in cursor:
             list.append(result)
         for id in list:
             cursor = g.conn.execute("SELECT DISTINCT title FROM item WHERE iid = %s;", id)
             for result in cursor:
-                contents.append("Share: " + result[0])
+                share.append(result[0])
 
         cursor.close()
-        context = dict(user=user, data=contents)
+        context = dict(user=user, data=contents, fave=fave, view=view, share=share)
         return render_template("profile.html", **context)
     else:
         return redirect('/user_login')

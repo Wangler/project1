@@ -31,8 +31,22 @@
     <div>{{data[2]}}</div>
   </div>
 
-  <h3>History</h3>
-{% for item in data[3:] %}
+  <h3>View History</h3>
+{% for item in view %}
+  <div>
+  <span onclick=someFunction({{ item|safe }});>{{ item }}</span>
+  </div>
+{% endfor %}
+
+   <h3>Fave History</h3>
+{% for item in fave %}
+  <div>
+  <span onclick=someFunction({{ item|safe }});>{{ item }}</span>
+  </div>
+{% endfor %}
+
+   <h3>Share History</h3>
+{% for item in share %}
   <div>
   <span onclick=someFunction({{ item|safe }});>{{ item }}</span>
   </div>
@@ -40,9 +54,6 @@
 
 <p><a href="/">Return to News List</a></p>
 
-<form method="POST" action="/add">
-<p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
-</form>
 
 </body>
 
