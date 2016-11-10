@@ -5,6 +5,23 @@
 <title> newsie </title>
 </head>
   <body>
+<div id ="main" class="container">
+  <h1>newsie</h1>
+</div>
+
+<div id ="main" class="container" align="right">
+<table style="width:30%">
+<tr>
+{% if user[0] %}
+<td><a href="/profile">My Profile</a></td>
+<td><a href="/user_logout">Log Out</a></td>
+{% else %}
+<td><a href="/user_login">Log In</a></td>
+{% endif %}
+</tr>
+</table>
+</div>
+    
 <div id="main" class="container">
     <h4>search results</h4>
     <table class="table table-striped table-hover table-responsive table-condensed">
