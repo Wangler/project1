@@ -153,11 +153,7 @@ def index():
   cursor = g.conn.execute("SELECT title, abstract, content FROM item")
   data = []
   for result in cursor:
-    facebook_share_url = 'https://www.facebook.com/sharer/sharer.php?u=' + quote(result['content'])
-    twitter_share_url = 'https://twitter.com/home?status=Discovered%20via%20Newsie%3A%20' + quote(result['content'])
-    gplus_share_url = 'https://plus.google.com/share?url=' + quote(result['content'])
-    shares = dict(twitter_share_url=twitter_share_url, facebook_share_url=facebook_share_url, gplus_share_url=gplus_share_url)
-    data.append(dict(result.items() + shares.items()))
+    data.append(result)
 
   """ LOADING ALL DROP-DOWN OPTIONS FOR SUBJECT"""
   subject_options = []
@@ -257,6 +253,84 @@ def view(title):
     return redirect(url[0])
     return render_template("index.html")
 
+@app.route('/fb_share/<title>', methods=['GET', 'POST'])
+def fb_share(title):
+    url = []
+    cursor = g.conn.execute("SELECT content FROM item WHERE title = %s;", title)
+    for result in cursor:
+        url.append('https://www.facebook.com/sharer/sharer.php?u=' + quote(result[0]))
+    if 'email' in session:
+        email = session['email']
+        iid = []
+        cursor = g.conn.execute("SELECT iid FROM item WHERE title = %s;", title)
+        for result in cursor:
+            iid.append(result[0])
+        sid = []
+        cursor = g.conn.execute("SELECT sid FROM cover WHERE iid = %s;", iid[0])
+        for result in cursor:
+            sid.append(result[0])
+        g.conn = engine.connect()
+        print datetime.datetime.now()
+        g.conn.execute("INSERT INTO user_share (share_time, platform, iid, sid, email) VALUES (%s, %s, %s, %s, %s);",
+                                      (datetime.datetime.now(), 'facebook', iid[0], sid[0], email))
+        g.conn.close()
+        gc.collect()
+    return redirect(url[0])
+    return render_template("index.html")
+
+@app.route('/twitter_share/<title>', methods=['GET', 'POST'])
+def twitter_share(title):
+    url = []
+    cursor = g.conn.execute("SELECT content FROM item WHERE title = %s;", title)
+    for result in cursor:
+        url.append('https://twitter.com/home?status=Discovered%20via%20Newsie%3A%20' + quote(result[0]))
+    if 'email' in session:
+        email = session['email']
+        iid = []
+        cursor = g.conn.execute("SELECT iid FROM item WHERE title = %s;", title)
+        for result in cursor:
+            iid.append(result[0])
+        sid = []
+        cursor = g.conn.execute("SELECT sid FROM cover WHERE iid = %s;", iid[0])
+        for result in cursor:
+            sid.append(result[0])
+        g.conn = engine.connect()
+        print datetime.datetime.now()
+        g.conn.execute("INSERT INTO user_share (share_time, platform, iid, sid, email) VALUES (%s, %s, %s, %s, %s);",
+                                      (datetime.datetime.now(), 'twitter', iid[0], sid[0], email))
+        g.conn.close()
+        gc.collect()
+    return redirect(url[0])
+    return render_template("index.html")
+
+
+@app.route('/gplus_share/<title>', methods=['GET', 'POST'])
+def gplus_share(title):
+    url = []
+    cursor = g.conn.execute("SELECT content FROM item WHERE title = %s;", title)
+    for result in cursor:
+        url.append('https://plus.google.com/share?url=' + quote(result[0]))
+    if 'email' in session:
+        email = session['email']
+        iid = []
+        cursor = g.conn.execute("SELECT iid FROM item WHERE title = %s;", title)
+        for result in cursor:
+            iid.append(result[0])
+        sid = []
+        cursor = g.conn.execute("SELECT sid FROM cover WHERE iid = %s;", iid[0])
+        for result in cursor:
+            sid.append(result[0])
+        g.conn = engine.connect()
+        print datetime.datetime.now()
+        g.conn.execute("INSERT INTO user_share (share_time, platform, iid, sid, email) VALUES (%s, %s, %s, %s, %s);",
+                                      (datetime.datetime.now(), 'google_plus', iid[0], sid[0], email))
+        g.conn.close()
+        gc.collect()
+    return redirect(url[0])
+    return render_template("index.html")
+
+
+
 @app.route('/fave/<title>', methods=['GET', 'POST'])
 def fave(title):
     if 'email' in session:
@@ -332,11 +406,7 @@ def filter_result():
 
         data = []
         for result in cursor:
-            facebook_share_url = 'https://www.facebook.com/sharer/sharer.php?u=' + quote(result['content'])
-            twitter_share_url = 'https://twitter.com/home?status=Discovered%20via%20Newsie%3A%20' + quote(result['content'])
-            gplus_share_url = 'https://plus.google.com/share?url=' + quote(result['content'])
-            shares = dict(twitter_share_url=twitter_share_url, facebook_share_url=facebook_share_url, gplus_share_url=gplus_share_url)
-            data.append(dict(result.items() + shares.items()))
+            data.append(result)
 
     return render_template("results.html", data=data)
 
