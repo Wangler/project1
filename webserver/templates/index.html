@@ -32,7 +32,7 @@
 </div>
 
 
-<div id="main" class="container">
+<div id="main" class="row" align="center">
 <!-- <h4>filter</h4> -->
 <br>
 <form name="Filters" action="{{url_for('filter_result')}}" method="POST">
@@ -44,6 +44,11 @@
     </select>
     <select name="Publisher" class="selectpicker" multiple data-live-search="true" title="Publisher">
         {% for option in publisher_options %}
+          <option> {{option}}</option> 
+        {% endfor %}          
+    </select>
+    <select name="Author" class="selectpicker" multiple data-live-search="true" title="Author">
+        {% for option in author_options %}
           <option> {{option}}</option> 
         {% endfor %}          
     </select>

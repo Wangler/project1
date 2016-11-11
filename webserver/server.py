@@ -163,6 +163,14 @@ def index():
 
   #print subject_options
 
+  """ LOADING ALL DROP-DOWN OPTIONS FOR AUTHOR"""
+  author_options = []
+  cursor = g.conn.execute("SELECT DISTINCT author_name FROM author")
+  for result in cursor:
+      author_options.append(result[0])
+
+  #print author_options
+
   """ LOADING ALL DROP-DOWN OPTIONS FOR PUBLISHER"""
   publisher_options = []
   cursor = g.conn.execute("SELECT DISTINCT publisher_name FROM publisher")
@@ -207,7 +215,7 @@ def index():
   #     <div>{{n}}</div>
   #     {% endfor %}
   #
-  context = dict(user=user, data=data, subject_options=subject_options, publisher_options=publisher_options, political_options=political_options)
+  context = dict(user=user, data=data, subject_options=subject_options, publisher_options=publisher_options, political_options=political_options, author_options=author_options)
 
 
   #
@@ -394,14 +402,20 @@ def filter_result():
             print request.form.getlist('Publisher')
             publisher_query = "SELECT title, abstract, content FROM item i, publisher p, publisher_publish_item ppi WHERE ppi.iid = i.iid AND ppi.pid = p.pid AND publisher_name in %(Publisher)s GROUP BY title, abstract, content"
 
+        """AUTHOR FILTERING"""
+        author_query = "SELECT title, abstract, content FROM item i, author a, author_write_item awi WHERE awi.iid = i.iid AND awi.aid = a.aid GROUP BY title, abstract, content"
+        if request.form.getlist('Author'):
+            print request.form.getlist('Author')
+            publisher_query = "SELECT title, abstract, content FROM item i, author a, author_write_item awi WHERE awi.iid = i.iid AND awi.aid = a.aid  AND author_name in %(Author)s GROUP BY title, abstract, content"
+
         """POLITICAL STANCE FILTERING"""
         political_query = "SELECT title, abstract, content FROM item i, publisher p, publisher_publish_item ppi WHERE ppi.iid = i.iid AND ppi.pid = p.pid GROUP BY title, abstract, content"
         if request.form['Political_Stance']:
             print request.form['Political_Stance']
             political_query = "SELECT title, abstract, content FROM item i, publisher p, publisher_publish_item ppi WHERE ppi.iid = i.iid AND ppi.pid = p.pid AND political_stance = %(Political_Stance)s GROUP BY title, abstract, content"
 
-        query = subject_query + " INTERSECT " + publisher_query + " INTERSECT " + political_query + ";"
-        params = dict(Subject=tuple(request.form.getlist('Subject')), Publisher=tuple(request.form.getlist('Publisher')), Political_Stance=request.form['Political_Stance'])
+        query = subject_query + " INTERSECT " + publisher_query + " INTERSECT " + author_query + " INTERSECT " + political_query + ";"
+        params = dict(Subject=tuple(request.form.getlist('Subject')), Publisher=tuple(request.form.getlist('Publisher')), Author=tuple(request.form.getlist('Author')), Political_Stance=request.form['Political_Stance'])
         cursor = g.conn.execute(query, params)
 
         data = []
