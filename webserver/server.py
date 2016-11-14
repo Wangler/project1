@@ -251,11 +251,12 @@ def view(title):
         sid = []
         cursor = g.conn.execute("SELECT sid FROM cover WHERE iid = %s;", iid[0])
         for result in cursor:
-            sid.append(result[0])
+            sid.extend(result)
         g.conn = engine.connect()
         print datetime.datetime.now()
-        g.conn.execute("INSERT INTO user_view (view_time, iid, sid, email) VALUES (%s, %s, %s, %s);",
-                                      (datetime.datetime.now(), iid[0], sid[0], email))
+        for subject_id in sid:
+            g.conn.execute("INSERT INTO user_view (view_time, iid, sid, email) VALUES (%s, %s, %s, %s);",
+                                      (datetime.datetime.now(), iid[0], subject_id, email))
         g.conn.close()
         gc.collect()
     return redirect(url[0])
@@ -540,8 +541,14 @@ def profile():
             for result in cursor:
                 share.append(result[0])
 
+        top_subjects = []
+        cursor = g.conn.execute("SELECT subject_name from user_view uv, subject s WHERE uv.sid = s.sid AND email = %s GROUP BY subject_name ORDER BY count(subject_name) DESC LIMIT 5;", session['email'])
+
+        for result in cursor:
+          top_subjects.append(result[0])
+
         cursor.close()
-        context = dict(user=user, data=contents, fave=fave, view=view, share=share)
+        context = dict(user=user, data=contents, fave=fave, view=view, share=share, top_subjects=top_subjects)
         return render_template("profile.html", **context)
     else:
         return redirect('/user_login')

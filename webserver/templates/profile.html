@@ -18,12 +18,12 @@
   <div>
     <div>{{data[0]}}</div>
   </div>
-
+<!-- 
   <h3>Password</h3>
 
   <div>
     <div>{{data[1]}}</div>
-  </div>
+  </div> -->
 
   <h3>Username</h3>
 
@@ -47,6 +47,13 @@
 
    <h3>Share History</h3>
 {% for item in share %}
+  <div>
+  <span onclick=someFunction({{ item|safe }});>{{ item }}</span>
+  </div>
+{% endfor %}
+
+   <h3>Top Viewed Subjects</h3>
+{% for item in top_subjects %}
   <div>
   <span onclick=someFunction({{ item|safe }});>{{ item }}</span>
   </div>
